@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: laravel-weather-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+    environment:
+      APP_ENV: local
+      APP_DEBUG: true
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
+    command: php artisan serve --host=0.0.0.0 --port=8000

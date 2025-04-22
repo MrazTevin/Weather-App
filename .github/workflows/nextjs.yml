@@ -1,0 +1,39 @@
+name: Next.js CI
+
+on:
+  push:
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/nextjs.yml'
+    branches: [main]
+  pull_request:
+    paths:
+      - 'frontend/**'
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Lint
+        run: |
+          cd frontend
+          npm run lint
+
+      - name: Build
+        run: |
+          cd frontend
+          npm run build
