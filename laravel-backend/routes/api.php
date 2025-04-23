@@ -5,7 +5,11 @@ use App\Http\Controllers\Api\WeatherController;
 use App\Http\Controllers\Api\ApiStatusController;
 
 
-// Route::get('/weather', [WeatherController::class, 'getWeather']);  
+// Route::get('/weather', [WeatherController::class, 'getWeather']); 
+Route::prefix('weather')->group(function () {
+    Route::get('/', [WeatherController::class, 'getWeatherByCity']);
+});
+
 Route::get('/status', [ApiStatusController::class, 'getStatus']);
     
 Route::get('/docker-test', function() {
