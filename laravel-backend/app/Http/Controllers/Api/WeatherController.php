@@ -66,4 +66,46 @@ class WeatherController extends Controller
             );
         }
     }
+
+     /**
+     * Search for cities by name (Geocoding API)
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    
+    public function searchCities(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'q' => 'required|string|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                ResponseFormatter::error('Validation error', 422, $validator->errors()),
+                422
+            );
+        }
+
+        try {
+            $query = $request->input('q');
+            $coordinates = $this->weatherService->getCoordinates($query);
+
+            if (!$coordinates) {
+                return response()->json(
+                    ResponseFormatter::error("No cities found matching: $query", 404),
+                    404
+                );
+            }
+
+            return response()->json(
+                ResponseFormatter::success($coordinates, 'City found')
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                ResponseFormatter::error($e->getMessage(), 500),
+                500
+            );
+        }
+    }
 }

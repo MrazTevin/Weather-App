@@ -4,6 +4,8 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Client\RequestException;
+
 
 class WeatherService
 {
@@ -61,4 +63,54 @@ class WeatherService
             'daily_forecasts' => $daily_forecasts
         ];
     }
+
+    
+     /**
+     * Get coordinates for a city name using the Geocoding API
+     * 
+     * @param string $cityName Name of the city to search for
+     * @param string|null $state State code (only for the US)
+     * @param string|null $country Country code (ISO 3166)
+     * @return array|null Coordinates [lat, lon] or null if not found
+     * @throws \Exception If API call fails
+     */
+    
+    public function getCoordinates(string $cityName, ?string $state = null, ?string $country = null): ?array
+    {
+        try {
+            $query = $cityName;
+            if ($state) {
+                $query .= ",$state";
+            }
+            if ($country) {
+                $query .= ",$country";
+            }
+            
+            $response = Http::get("https://api.openweathermap.org/data/2.5/weather/geo/1.0/direct", [
+                'q' => $query,
+                'limit' => 1,
+                'appid' => $this->apiKey
+            ]);
+            
+            $response->throw();
+            $data = $response->json();
+            
+            if (empty($data)) {
+                Log::info("No coordinates found for city: $cityName");
+                return null;
+            }
+            
+            return [
+                'lat' => $data[0]['lat'],
+                'lon' => $data[0]['lon'],
+                'name' => $data[0]['name'],
+                'country' => $data[0]['country'],
+                'state' => $data[0]['state'] ?? null,
+            ];
+        } catch (RequestException $e) {
+            Log::error("Failed to get coordinates for $cityName: " . $e->getMessage());
+            throw new \Exception("Failed to get coordinates: " . $e->getMessage(), 0, $e);
+        }
+    }
+
 }
