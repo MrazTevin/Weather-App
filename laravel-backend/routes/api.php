@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ApiStatusController;
 // Route::get('/weather', [WeatherController::class, 'getWeather']); 
 Route::prefix('weather')->group(function () {
     Route::get('/', [WeatherController::class, 'getWeatherByCity']);
+    Route::get('/search', [WeatherController::class, 'searchCities']);
 });
 
 Route::get('/status', [ApiStatusController::class, 'getStatus']);

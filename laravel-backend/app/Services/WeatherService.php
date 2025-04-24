@@ -74,7 +74,7 @@ class WeatherService
      * @return array|null Coordinates [lat, lon] or null if not found
      * @throws \Exception If API call fails
      */
-    
+
     public function getCoordinates(string $cityName, ?string $state = null, ?string $country = null): ?array
     {
         try {
@@ -86,7 +86,7 @@ class WeatherService
                 $query .= ",$country";
             }
             
-            $response = Http::get("https://api.openweathermap.org/data/2.5/weather/geo/1.0/direct", [
+            $response = Http::get("https://api.openweathermap.org/geo/1.0/direct", [
                 'q' => $query,
                 'limit' => 1,
                 'appid' => $this->apiKey
