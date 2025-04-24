@@ -10,6 +10,7 @@ Route::prefix('weather')->group(function () {
     Route::get('/', [WeatherController::class, 'getWeatherByCity']);
     Route::get('/search', [WeatherController::class, 'searchCities']);
     Route::post('/convert', [WeatherController::class, 'convertTemperature']);
+    Route::get('/forecast', [WeatherController::class, 'getWeatherForecastByCoordinates']);
 });
 
 Route::get('/status', [ApiStatusController::class, 'getStatus']);

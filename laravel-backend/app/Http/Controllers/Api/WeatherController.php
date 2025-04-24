@@ -108,7 +108,7 @@ class WeatherController extends Controller
             );
         }
     }
-    
+
     /**
      * Convert temperature between Celsius and Fahrenheit
      * 
@@ -156,5 +156,39 @@ class WeatherController extends Controller
                 'to' => $to
             ], 'Temperature converted successfully')
         );
+    }
+
+    public function getWeatherForecastByCoordinates(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'lat' => 'required|numeric',
+            'lon' => 'required|numeric',
+            'units' => 'sometimes|string|in:standard,metric,imperial',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                ResponseFormatter::error('Validation error', 422, $validator->errors()),
+                422
+            );
+        }
+
+        try {
+            $lat = $request->input('lat');
+            $lon = $request->input('lon');
+            $units = $request->input('units', 'metric');
+
+            $forecastData = $this->weatherService->getForecast($lat, $lon, $units);
+            $dailyForecasts = $this->weatherService->processDailyForecasts($forecastData);
+
+            return response()->json(
+                ResponseFormatter::success($dailyForecasts, '5-day forecast retrieved successfully')
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                ResponseFormatter::error($e->getMessage(), 500),
+                500
+            );
+        }
     }
 }

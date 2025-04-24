@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   app:
@@ -13,5 +12,5 @@ services:
     environment:
       APP_ENV: local
       APP_DEBUG: true
-      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
+      OPENWEATHER_API_KEY: ${OPENWEATHERMAP_API_KEY}
     command: php artisan serve --host=0.0.0.0 --port=8000
