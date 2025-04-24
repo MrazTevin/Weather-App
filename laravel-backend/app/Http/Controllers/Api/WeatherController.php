@@ -67,13 +67,13 @@ class WeatherController extends Controller
         }
     }
 
-     /**
+    /**
      * Search for cities by name (Geocoding API)
      * 
      * @param Request $request
      * @return JsonResponse
      */
-    
+
     public function searchCities(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -107,5 +107,54 @@ class WeatherController extends Controller
                 500
             );
         }
+    }
+    
+    /**
+     * Convert temperature between Celsius and Fahrenheit
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+
+    public function convertTemperature(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'value' => 'required|numeric',
+            'from' => 'required|string|in:celsius,fahrenheit',
+            'to' => 'required|string|in:celsius,fahrenheit',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                ResponseFormatter::error('Validation error', 422, $validator->errors()),
+                422
+            );
+        }
+
+        $value = $request->input('value');
+        $from = $request->input('from');
+        $to = $request->input('to');
+
+        if ($from === $to) {
+            return response()->json(
+                ResponseFormatter::success(['value' => $value], 'No conversion needed')
+            );
+        }
+
+        $result = 0;
+        if ($from === 'celsius' && $to === 'fahrenheit') {
+            $result = ($value * 9 / 5) + 32;
+        } elseif ($from === 'fahrenheit' && $to === 'celsius') {
+            $result = ($value - 32) * 5 / 9;
+        }
+
+        return response()->json(
+            ResponseFormatter::success([
+                'value' => round($result, 2),
+                'original' => $value,
+                'from' => $from,
+                'to' => $to
+            ], 'Temperature converted successfully')
+        );
     }
 }
