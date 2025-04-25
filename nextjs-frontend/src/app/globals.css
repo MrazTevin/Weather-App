@@ -100,7 +100,12 @@ body {
 
 @layer base {
   * {
-    border: 1px solid hsl(var(--border));
+    /* border: 1px solid hsl(var(--border)); */
+    border-color: hsl(var(--border));
+
+    input, button, select, textarea {
+      border: hsl(var(--border));
+    }
   }
   
   body {
