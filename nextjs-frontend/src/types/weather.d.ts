@@ -38,3 +38,41 @@ export interface WeatherData {
   forecast: DailyForecast[]
   formattedDate: string
 }
+
+// API Response Types
+export interface ApiCurrentWeatherResponse {
+    current: {
+      temp: number
+      weather: {
+        main: string
+        description: string
+      }
+      humidity: number
+      wind: {
+        speed: number
+        direction?: number
+        deg?: number
+      }
+      formatted_date?: string
+    }
+    location: {
+      name: string
+      country: string
+      lat?: number
+      lon?: number
+    }
+  }
+  
+  export interface ApiForecastItemResponse {
+    date: string
+    temp: number
+    weather: {
+      main: string
+      description: string
+    }
+    humidity: number
+    wind: {
+      speed: number
+      deg?: number
+    }
+  }
